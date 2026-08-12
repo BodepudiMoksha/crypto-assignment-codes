@@ -7,11 +7,9 @@ int main()
     char str[100], temp[100];
     char encrypted[100], decrypted[100];
 
-    /* Fixed 2x2 key matrix */
     int key[2][2] = {{27, 4}, {20, 7}};
 
-    /* Inverse of key matrix modulo 26 */
-    int inv[2][2] = {{17, 04}, {7, 20}};
+    int inv[2][2] = {{17, 20}, {22, 21}};
 
     int i, n = 0, k = 0;
     int a, b;
@@ -21,7 +19,6 @@ int main()
 
     str[strcspn(str, "\n")] = '\0';
 
-    /* Check input */
     for (i = 0; str[i] != '\0'; i++)
     {
         if (str[i] != ' ' && !isalpha(str[i]))
@@ -31,7 +28,6 @@ int main()
         }
     }
 
-    /* Remove spaces and convert to uppercase */
     for (i = 0; str[i] != '\0'; i++)
     {
         if (str[i] != ' ')
@@ -41,7 +37,6 @@ int main()
         }
     }
 
-    /* Add X if length is odd */
     if (n % 2 != 0)
     {
         temp[n] = 'X';
@@ -50,7 +45,7 @@ int main()
 
     temp[n] = '\0';
 
-    /* Encryption */
+    
     for (i = 0; i < n; i += 2)
     {
         a = temp[i] - 'A';
@@ -67,7 +62,7 @@ int main()
 
     printf("Encrypted string: %s\n", encrypted);
 
-    /* Decryption */
+    
     k = 0;
 
     for (i = 0; i < n; i += 2)
