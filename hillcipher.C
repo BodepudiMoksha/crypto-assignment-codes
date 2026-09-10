@@ -2,84 +2,88 @@
 #include <string.h>
 #include <ctype.h>
 
+#define MOD 26
+
+int mod(int n)
+{
+    return (n % MOD + MOD) % MOD;
+}
+
 int main()
 {
-    char str[100], temp[100];
-    char encrypted[100], decrypted[100];
+    char text[200];
+    char plain[200];
+    char cipher[200];
+    char decrypted[200];
 
-    int key[2][2] = {{27, 4}, {20, 7}};
+    int key[2][2] = {
+        {3, 3},
+        {2, 5}
+    };
 
-    int inv[2][2] = {{17, 20}, {22, 21}};
+    int inv[2][2] = {
+        {15, 17},
+        {20, 9}
+    };
 
-    int i, n = 0, k = 0;
+    int i, j, k = 0;
     int a, b;
 
-    printf("Enter the string to be encrypted:\n");
-    fgets(str, sizeof(str), stdin);
+    printf("Enter message: ");
+    fgets(text, sizeof(text), stdin);
 
-    str[strcspn(str, "\n")] = '\0';
-
-    for (i = 0; str[i] != '\0'; i++)
+    /* Remove spaces and keep only alphabets */
+    for(i = 0; text[i] != '\0'; i++)
     {
-        if (str[i] != ' ' && !isalpha(str[i]))
+        if(isalpha(text[i]))
         {
-            printf("Invalid character in the string. Please enter only alphabets and spaces.\n");
-            return 0;
+            plain[k++] = toupper(text[i]);
         }
     }
 
-    for (i = 0; str[i] != '\0'; i++)
+    plain[k] = '\0';
+
+    /* Add X if message length is odd */
+    if(strlen(plain) % 2 != 0)
     {
-        if (str[i] != ' ')
-        {
-            temp[n] = toupper(str[i]);
-            n++;
-        }
+        strcat(plain, "X");
     }
 
-    if (n % 2 != 0)
-    {
-        temp[n] = 'X';
-        n++;
-    }
-
-    temp[n] = '\0';
-
-    
-    for (i = 0; i < n; i += 2)
-    {
-        a = temp[i] - 'A';
-        b = temp[i + 1] - 'A';
-
-        encrypted[k++] =
-            ((key[0][0] * a + key[0][1] * b) % 26) + 'A';
-
-        encrypted[k++] =
-            ((key[1][0] * a + key[1][1] * b) % 26) + 'A';
-    }
-
-    encrypted[k] = '\0';
-
-    printf("Encrypted string: %s\n", encrypted);
-
-    
+    /* Encryption */
     k = 0;
 
-    for (i = 0; i < n; i += 2)
+    for(i = 0; plain[i] != '\0'; i += 2)
     {
-        a = encrypted[i] - 'A';
-        b = encrypted[i + 1] - 'A';
+        a = plain[i] - 'A';
+        b = plain[i + 1] - 'A';
 
-        decrypted[k++] =
-            ((inv[0][0] * a + inv[0][1] * b) % 26 + 26) % 26 + 'A';
+        cipher[k++] = mod(key[0][0] * a + key[0][1] * b) + 'A';
+        cipher[k++] = mod(key[1][0] * a + key[1][1] * b) + 'A';
+    }
 
-        decrypted[k++] =
-            ((inv[1][0] * a + inv[1][1] * b) % 26 + 26) % 26 + 'A';
+    cipher[k] = '\0';
+
+    printf("\nKey Matrix:\n");
+    printf("%d %d\n", key[0][0], key[0][1]);
+    printf("%d %d\n", key[1][0], key[1][1]);
+
+    printf("\nEncrypted message: %s\n", cipher);
+
+    /* Decryption */
+    k = 0;
+
+    for(i = 0; cipher[i] != '\0'; i += 2)
+    {
+        a = cipher[i] - 'A';
+        b = cipher[i + 1] - 'A';
+
+        decrypted[k++] = mod(inv[0][0] * a + inv[0][1] * b) + 'A';
+        decrypted[k++] = mod(inv[1][0] * a + inv[1][1] * b) + 'A';
     }
 
     decrypted[k] = '\0';
 
-    printf("Decrypted string: %s\n", decrypted);
+    printf("Decrypted message: %s\n", decrypted);
 
     return 0;
 }
